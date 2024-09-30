@@ -26,6 +26,7 @@ namespace WildStar.TestBed
         {
             table.Load(path + name + ".tbl");
             nextEntry = GetMaxID() + 1;
+            MaxID = GetMaxID();
         }
 
         public void Save(string path)
@@ -39,17 +40,6 @@ namespace WildStar.TestBed
         private uint GetMaxID()
         {
             return table.Entries.Keys.Max();
-            /*uint maxVal = 0;
-            foreach (var entry in table.Entries)
-            {
-                uint id = (uint)entry.Values[0].Value;
-                if (id > maxVal)
-                {
-                    maxVal = id;
-                }
-            }
-            MaxID = maxVal;
-            return maxVal;*/
         }
 
         public uint AddEntry(GameTableEntry entry, uint? id = null)

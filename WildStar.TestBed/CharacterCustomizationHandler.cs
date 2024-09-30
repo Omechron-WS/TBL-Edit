@@ -267,7 +267,7 @@ namespace WildStar.TestBed
 
                 if(found)
                 {
-                    if(itemDisplay.GetEntry(displayIDStart) != null)
+                    if(itemDisplay.table.HasEntry(displayIDStart))
                     {
                         throw new ArgumentException("DisplayID range isn't free!");
                     }
