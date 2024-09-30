@@ -13,7 +13,7 @@ namespace WildStar.TestBed.GameTable
     {
         public string Name { get; set; }
         public List<GameTableColumn> Columns { get; } = new List<GameTableColumn>();
-        public List<GameTableEntry> Entries { get; } = new List<GameTableEntry>();
+        public Dictionary<uint, GameTableEntry> Entries { get; } = new Dictionary<uint, GameTableEntry>();
 
         public long recordSize = 0;
         public bool padEntries = false;
@@ -36,7 +36,7 @@ namespace WildStar.TestBed.GameTable
 
         public bool HasEntry(uint id)
         {
-            return Entries.Any(e => (uint)e.Values[0].Value == id);
+            return Entries.ContainsKey(id);
         }
 
         /// <summary>
@@ -51,11 +51,11 @@ namespace WildStar.TestBed.GameTable
         /// </summary>
         public void AddEntry(GameTableEntry entry, uint id)
         {
-            if (Entries.Any(e => (uint)e.Values[0].Value == id))
+            if (HasEntry(id))
                 return;
 
             entry.AddInteger(id, 0);
-            Entries.Add(entry);
+            Entries.Add(id, entry);
         }
 
         /// <summary>
@@ -63,7 +63,7 @@ namespace WildStar.TestBed.GameTable
         /// </summary>
         public void RemoveEntry(uint id)
         {
-            Entries.RemoveAll(e => (uint) e.Values[0].Value == id);
+            Entries.Remove(id);
         }
 
 
@@ -104,37 +104,15 @@ namespace WildStar.TestBed.GameTable
 
                 if (header.RecordCount > 0)
                 {
-                    header.RecordSize = Entries[0].CalculateSize(padEntries);
+                    header.RecordSize = Entries.Values.First().CalculateSize(padEntries);
                     if(header.RecordSize != recordSize)
                     {
                         padEntries = true;
-                        header.RecordSize = Entries[0].CalculateSize(padEntries);
+                        header.RecordSize = Entries.Values.First().CalculateSize(padEntries);
                     }
                 }
 
-                WriteEntries(writer);
-                header.TotalRecordSize = stream.Position - headerSize - header.RecordOffset;
-
-                PadTo16(writer);
-
-                // build lookup table
-                header.MaxId = Entries.Max(e => (uint)e.Values[0].Value) + 1;
-                header.LookupOffset = stream.Position - headerSize;
-
-                var lookup = new int[header.MaxId];
-                for (int i = 0; i < header.MaxId; i++)
-                    lookup[i] = -1;
-
-                for (var i = 0; i < Entries.Count; i++)
-                {
-                    int lol = (int)(uint)Entries[i].Values[0].Value;
-                    lookup[lol] = i;
-                }
-
-                for (int i = 0; i < header.MaxId; i++)
-                    writer.Write(lookup[i]);
-
-                PadTo16(writer);
+                WriteEntries(writer, ref header);
 
                 // write header
                 var span = MemoryMarshal.CreateReadOnlySpan(ref header, 1);
@@ -146,7 +124,7 @@ namespace WildStar.TestBed.GameTable
 
         private void PadTo16(BinaryWriter writer)
         {
-            long padding = 16 - writer.BaseStream.Position % 16l;
+            long padding = 16 - writer.BaseStream.Position % 16L;
             if (padding == 16)
                 padding = 0;
 
@@ -183,18 +161,29 @@ namespace WildStar.TestBed.GameTable
             }
         }
 
-        private void WriteEntries(BinaryWriter writer)
+        private void WriteEntries(BinaryWriter writer, ref Header header)
         {
-            uint entrySize = Entries[0].CalculateSize(padEntries);
+            header.MaxId = Entries.Keys.Max();
+            var lookup = new int[header.MaxId + 1];
+            for (int i = 0; i < header.MaxId; i++)
+                lookup[i] = -1;
+
+            uint entrySize = Entries.Values.First().CalculateSize(padEntries);
             var stringTableOffset = entrySize * Entries.Count;
 
             Dictionary<string, uint> stringLookup = new Dictionary<string, uint>();
 
+            int entryCounter = 0;
+
             using (var stringTableStream = new MemoryStream())
             using (var stringTableWriter = new BinaryWriter(stringTableStream))
             {
-                foreach (GameTableEntry entry in Entries)
+                foreach (GameTableEntry entry in Entries.Values)
                 {
+                    uint id = entry.Values[0].GetValue<uint>();
+                    lookup[id] = entryCounter;
+                    entryCounter += 1;
+
                     long start = writer.BaseStream.Position;
                     foreach (GameTableValue value in entry.Values)
                     {
@@ -249,11 +238,21 @@ namespace WildStar.TestBed.GameTable
 
                 writer.Write(stringTableStream.ToArray());
             }
-        }
 
-        private void WriteLookupTable()
-        {
+            var headerSize = Marshal.SizeOf<Header>();
 
+            header.TotalRecordSize = writer.BaseStream.Position - headerSize - header.RecordOffset;
+
+            PadTo16(writer);
+
+            // build lookup table
+            header.MaxId = Entries.Keys.Max() + 1;
+            header.LookupOffset = writer.BaseStream.Position - headerSize;
+
+            for (int i = 0; i < header.MaxId; i++)
+                writer.Write(lookup[i]);
+
+            PadTo16(writer);
         }
 
 
@@ -365,7 +364,7 @@ namespace WildStar.TestBed.GameTable
 
 
                     var lol = new GameTableEntry(values);
-                    Entries.Add(lol);
+                    Entries.Add(values[0].GetValue<uint>(), lol);
 
                     
                 }

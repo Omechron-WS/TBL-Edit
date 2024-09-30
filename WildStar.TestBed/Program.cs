@@ -59,7 +59,7 @@ namespace WildStar.TestBed
 
             startItem2Id = AddCreaturesMounts(startItem2Id);
             //no more new morphs/mounts past this line-- adding NPC decor only
-            uint startCreature2ID = creature2.GetMaxID();
+            uint startCreature2ID = creature2.MaxID;
 
 
             AddColorShift("Art\\FX\\LutMaps\\HousingDecor\\CoolShift_LUT.tex", 18, "Cool-Shift");
@@ -108,7 +108,7 @@ namespace WildStar.TestBed
 
             // Unlock all skies/grounds/musics.
 
-            foreach (var entry in wallpaperInfo.table.Entries)
+            foreach (var entry in wallpaperInfo.table.Entries.Values)
             {
                 entry.Values[7].SetValue(0u);
                 entry.Values[8].SetValue(0u);
@@ -8837,16 +8837,16 @@ namespace WildStar.TestBed
             AddNPCDecor(2974, DecorCategory.CharactersCreatures, 75667, 5381, "Art\\Prop\\Constructed\\Banner\\Pell\\PRP_Banner_PellTech_Water_000.m3", "Winterfury Acolyte", 99);
             AddNPCDecor(2974, DecorCategory.CharactersCreatures, 75668, 5382, "Art\\Prop\\Constructed\\Banner\\Pell\\PRP_Banner_PellTech_Water_000.m3", "Winterfury Snow-Stalker", 99);
 
-            uint startCreature2ID = creature2.GetMaxID();
-            uint startDecorInfoID = decorInfo.GetMaxID();
+            uint startCreature2ID = creature2.MaxID;
+            uint startDecorInfoID = decorInfo.MaxID;
 
             
         }
 
         static void AddSpacerOutfits()
         {
-            uint startCreature2OutfitInfoId = creature2OutfitInfo.GetMaxID();
-            uint startOutfitGroupId = creature2OutfitGroupEntry.GetMaxID();
+            uint startCreature2OutfitInfoId = creature2OutfitInfo.MaxID;
+            uint startOutfitGroupId = creature2OutfitGroupEntry.MaxID;
             //Dominion
             uint dominionSpacerOutfitId = AddCreatureOutfitGroupEntry(8170, startOutfitGroupId + 1, startOutfitGroupId + 1, AddCreatureOutfitInfo(10232, startCreature2OutfitInfoId + 1, 4448, 4449, 4450, 4451, 4452, 4453), 1);
             Console.WriteLine("dominionSpacerOutfitId = " + dominionSpacerOutfitId);
@@ -8856,8 +8856,8 @@ namespace WildStar.TestBed
         }
         static void AddSwimsuitOutfits()
         {
-            uint startCreature2OutfitInfoId = creature2OutfitInfo.GetMaxID();
-            uint startOutfitGroupId = creature2OutfitGroupEntry.GetMaxID();
+            uint startCreature2OutfitInfoId = creature2OutfitInfo.MaxID;
+            uint startOutfitGroupId = creature2OutfitGroupEntry.MaxID;
             //000A
             uint swimsuitOutfitId00A_F = AddCreatureOutfitGroupEntry(8170, startOutfitGroupId+1, startOutfitGroupId+1, AddCreatureOutfitInfo(10232, startCreature2OutfitInfoId+1, 8669, 8663), 1);
             Console.WriteLine("swimsuitOutfitId00A_F = " + swimsuitOutfitId00A_F);
@@ -8892,7 +8892,7 @@ namespace WildStar.TestBed
 
         static void RemoveItemFactionRestrictions()
         {
-            foreach(var entry in item2.table.Entries)
+            foreach(var entry in item2.table.Entries.Values)
             {
                 if (entry.Values[14].GetValue<uint>() != 0)
                 {
@@ -8904,7 +8904,7 @@ namespace WildStar.TestBed
 
         static uint AddSFWItems(uint startItem2Id)
         {
-            uint itemDisplayStartId = itemDisplay.GetMaxID();
+            uint itemDisplayStartId = itemDisplay.MaxID;
 
             // Create chest entry
             var  itemDisplayEntry_Top = itemDisplay.CopyEntry(8669); // copy swimsuit top display
@@ -8942,7 +8942,7 @@ namespace WildStar.TestBed
             Console.WriteLine("NsfwsItemDisplayId_Top = " + NsfwsItemDisplayId_Top + "  NsfwsItemDisplayId_Bottom = " + NsfwsItemDisplayId_Bottom);
 
             //Create OutfitInfo Entry
-            uint startCreature2OutfitInfoId = creature2OutfitInfo.GetMaxID();
+            uint startCreature2OutfitInfoId = creature2OutfitInfo.MaxID;
             var outfitInfoEntry = creature2OutfitInfo.CopyEntry(8572);
             outfitInfoEntry.Values[1].SetValue(NsfwsItemDisplayId_Top);
             outfitInfoEntry.Values[2].SetValue(NsfwsItemDisplayId_Bottom);
@@ -8951,7 +8951,7 @@ namespace WildStar.TestBed
             startCreature2OutfitInfoId++;
 
             //Create OutfitGroup entry
-            uint startOutfitGroupId = creature2OutfitGroupEntry.GetMaxID();
+            uint startOutfitGroupId = creature2OutfitGroupEntry.MaxID;
             var outfitGroupEntry = creature2OutfitGroupEntry.CopyEntry(9267);
             outfitGroupEntry.Values[1].SetValue(startOutfitGroupId + 1);
             outfitGroupEntry.Values[2].SetValue(NsfwsOutfitInfoId);
@@ -9044,7 +9044,7 @@ namespace WildStar.TestBed
                 { 101, ("wounded4", null) }
             };
 
-            foreach (var entry in emotes.table.Entries)
+            foreach (var entry in emotes.table.Entries.Values)
             {
                 uint id = (uint)entry.Values[0].Value;
                 if (EmoteLibrary.TryGetValue(id, out var tuple))
@@ -9057,7 +9057,7 @@ namespace WildStar.TestBed
 
         static void HousingPlugUnlocks()
         {
-            foreach (var entry in housingPlugItem.table.Entries)
+            foreach (var entry in housingPlugItem.table.Entries.Values)
             {
                 uint id = (uint)entry.Values[0].Value;
                 /*if(id == 557)
@@ -9252,8 +9252,8 @@ namespace WildStar.TestBed
             AddBodyTypes(push3, push3 + 10);
 
             //Push 4 - Drem Dyes******************************************************************************************
-            uint startDyeColorRampId = dyeColorRamp.GetMaxID();
-            uint startItemColorSetId = itemColorSet.GetMaxID();
+            uint startDyeColorRampId = dyeColorRamp.MaxID;
+            uint startItemColorSetId = itemColorSet.MaxID;
             List<(uint, uint, string)> newDyeColorRamps = new List<(uint, uint, string)>
             {
                 //Generic Hair Color
@@ -9710,8 +9710,8 @@ namespace WildStar.TestBed
         }
         static void AddCOGSOutfits()
         {
-            uint startCreature2OutfitInfoId = creature2OutfitInfo.GetMaxID();
-            uint startOutfitGroupId = creature2OutfitGroupEntry.GetMaxID();
+            uint startCreature2OutfitInfoId = creature2OutfitInfo.MaxID;
+            uint startOutfitGroupId = creature2OutfitGroupEntry.MaxID;
             
             //Dominion Style 1
             uint dominionCOGSOutfitId_1 = AddCreatureOutfitGroupEntry(9753, startOutfitGroupId + 1, startOutfitGroupId + 1, AddCreatureOutfitInfo(9058, startCreature2OutfitInfoId + 1, null, null, null, null, null, null, 102, 102, 102, 102), 1);
@@ -9832,10 +9832,10 @@ namespace WildStar.TestBed
         static uint AddCreaturesMounts(uint startItem2Id)
         {
             //GetMaxID is NOT returning the highest ID currently in these tables...
-            uint startCreature2ID = creature2.GetMaxID() + 1000;
+            uint startCreature2ID = creature2.MaxID + 1000;
             uint startCreature2DisplayGroupID = 41453 + 1000;
-            uint startCreature2DisplayGroupEntryID = creature2DisplayGroupEntry.GetMaxID() + 1000;
-            uint startCreature2DisplayInfoID = creature2DisplayInfo.GetMaxID() + 1000;
+            uint startCreature2DisplayGroupEntryID = creature2DisplayGroupEntry.MaxID + 1000;
+            uint startCreature2DisplayInfoID = creature2DisplayInfo.MaxID + 1000;
 
             // Type: Riding Pumera
             // (Texture, Name, Creature2 ID, Creature2DisplayGroup ID, Creature2DisplayGroupEntry ID, Creature2DisplayInfo ID, scale)
@@ -10397,7 +10397,7 @@ namespace WildStar.TestBed
             itemSpecial.beta = false;
             unitVehicle.beta = false;
 
-            return item2.GetMaxID();
+            return item2.MaxID;
         }
 
         
@@ -10644,7 +10644,7 @@ namespace WildStar.TestBed
 
         static uint GetColorSet(uint col1, uint col2 = 0, uint col3 = 0)
         {
-            GameTableEntry entry = itemColorSet.table.Entries.Where(e =>
+            GameTableEntry entry = itemColorSet.table.Entries.Values.Where(e =>
                 e.Values[1].GetValue<uint>() == col1 &&
                 e.Values[2].GetValue<uint>() == col2 &&
                 e.Values[3].GetValue<uint>() == col3
@@ -11131,7 +11131,7 @@ namespace WildStar.TestBed
             uint newId = 0u;
             if (id <= 0u)
             {
-                uint maxId = dyeColorRamp.GetMaxID();
+                uint maxId = dyeColorRamp.MaxID;
                 newId = maxId++;
             }
             else
@@ -11154,7 +11154,7 @@ namespace WildStar.TestBed
             uint newId = 0u;
             if (id <= 0u)
             {
-                uint maxId = dyeColorRamp.GetMaxID();
+                uint maxId = dyeColorRamp.MaxID;
                 newId = maxId++;
             }
             else

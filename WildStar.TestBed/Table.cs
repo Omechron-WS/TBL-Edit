@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using WildStar.TestBed.GameTable;
 
 namespace WildStar.TestBed
@@ -11,6 +12,7 @@ namespace WildStar.TestBed
         public bool doSave = true;
         public bool requireID = false;
         public bool beta = false;
+        public uint MaxID { get; private set; }
 
         public Table(string name, bool doSave = true, bool requireID = false)
         {
@@ -34,9 +36,10 @@ namespace WildStar.TestBed
             }
         }
 
-        public uint GetMaxID()
+        private uint GetMaxID()
         {
-            uint maxVal = 0;
+            return table.Entries.Keys.Max();
+            /*uint maxVal = 0;
             foreach (var entry in table.Entries)
             {
                 uint id = (uint)entry.Values[0].Value;
@@ -45,7 +48,8 @@ namespace WildStar.TestBed
                     maxVal = id;
                 }
             }
-            return maxVal;
+            MaxID = maxVal;
+            return maxVal;*/
         }
 
         public uint AddEntry(GameTableEntry entry, uint? id = null)
@@ -68,6 +72,7 @@ namespace WildStar.TestBed
                 throw new ArgumentException("Given ID already exists in table!");
             }
             table.AddEntry(entry, _id);
+            MaxID = Math.Max(MaxID, _id);
             return _id;
         }
 
@@ -102,14 +107,7 @@ namespace WildStar.TestBed
 
         public static GameTableEntry GetEntry(GameTable.GameTable table, uint id)
         {
-            foreach (GameTableEntry entry in table.Entries)
-            {
-                if ((uint)entry.Values[0].Value == id)
-                {
-                    return entry;
-                }
-            }
-            return null;
+            return table.Entries[id];
         }
 
         public GameTableEntry GetEntry(uint id)

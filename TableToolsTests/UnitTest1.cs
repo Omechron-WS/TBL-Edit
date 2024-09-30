@@ -80,21 +80,22 @@ namespace TableToolsTests
 
         public static void areStreamsEqual(Stream stream1, Stream stream2)
         {
+            const int step = 10000;
             stream1.Position = 0;
             stream2.Position = 0;
             Assert.AreEqual(stream1.Length, stream2.Length);
 
             int position = 0;
 
-            byte[] buf1 = new byte[10000];
-            byte[] buf2 = new byte[10000];
+            byte[] buf1 = new byte[step];
+            byte[] buf2 = new byte[step];
 
             while (position < stream1.Length)
             {
                 int amount = (int)stream1.Length - position;
-                if (amount > 10000)
+                if (amount > step)
                 {
-                    amount = 10000;
+                    amount = step;
                 }
 
                 stream1.Read(buf1, 0, amount);

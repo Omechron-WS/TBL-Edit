@@ -28,7 +28,7 @@ namespace WildStar.TestBed
         public void buildSelectionMap()
         {
             selectionMap = new Dictionary<(uint, uint), GameTableEntry>();
-            foreach (var entry in characterCustomizationSelectionTable.table.Entries)
+            foreach (var entry in characterCustomizationSelectionTable.table.Entries.Values)
             {
                 uint label = entry.Values[1].GetValue<uint>();
                 uint value = entry.Values[2].GetValue<uint>();
@@ -39,7 +39,7 @@ namespace WildStar.TestBed
         public void buildCustomizationsByRaceGenderMap()
         {
             customizationsByRaceGender = new Dictionary<(uint, uint), List<GameTableEntry>>();
-            foreach (var entry in characterCustomizationTable.table.Entries)
+            foreach (var entry in characterCustomizationTable.table.Entries.Values)
             {
                 uint race = entry.Values[1].GetValue<uint>();
                 uint gender = entry.Values[2].GetValue<uint>();
@@ -235,7 +235,7 @@ namespace WildStar.TestBed
             }
             if(displayIDStart == 0)
             {
-                displayIDStart = itemDisplay.GetMaxID() + 1;
+                displayIDStart = itemDisplay.MaxID + 1;
             }
 
             for(int i = 0; i < list.Count; ++i)
