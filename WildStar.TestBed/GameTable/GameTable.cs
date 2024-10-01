@@ -112,7 +112,7 @@ namespace WildStar.TestBed.GameTable
                     }
                 }
 
-                WriteEntries(writer, ref header);
+                WriteEntries(writer, stream, ref header);
 
                 // write header
                 var span = MemoryMarshal.CreateReadOnlySpan(ref header, 1);
@@ -161,7 +161,7 @@ namespace WildStar.TestBed.GameTable
             }
         }
 
-        private void WriteEntries(BinaryWriter writer, ref Header header)
+        private void WriteEntries(BinaryWriter writer, FileStream stream, ref Header header)
         {
             header.MaxId = Entries.Keys.Max();
             var lookup = new int[header.MaxId + 1];
@@ -184,7 +184,7 @@ namespace WildStar.TestBed.GameTable
                     lookup[id] = entryCounter;
                     entryCounter += 1;
 
-                    long start = writer.BaseStream.Position;
+                    long start = stream.Position;
                     foreach (GameTableValue value in entry.Values)
                     {
                         switch (value.Type)
@@ -202,7 +202,7 @@ namespace WildStar.TestBed.GameTable
                                 writer.Write((ulong)value.Value);
                                 break;
                             case DataType.String:
-                                long a = (writer.BaseStream.Position - start) % 8;
+                                long a = (stream.Position - start) % 8;
                                 if (a != 0)
                                 {
                                     writer.Write((uint)0);
@@ -225,7 +225,7 @@ namespace WildStar.TestBed.GameTable
                         }
                     }
 
-                    long end = writer.BaseStream.Position - start;
+                    long end = stream.Position - start;
                     if (end != entrySize)
                     {
                         long difference = entrySize - end;
@@ -241,13 +241,13 @@ namespace WildStar.TestBed.GameTable
 
             var headerSize = Marshal.SizeOf<Header>();
 
-            header.TotalRecordSize = writer.BaseStream.Position - headerSize - header.RecordOffset;
+            header.TotalRecordSize = stream.Position - headerSize - header.RecordOffset;
 
             PadTo16(writer);
 
             // build lookup table
             header.MaxId = Entries.Keys.Max() + 1;
-            header.LookupOffset = writer.BaseStream.Position - headerSize;
+            header.LookupOffset = stream.Position - headerSize;
 
             for (int i = 0; i < header.MaxId; i++)
                 writer.Write(lookup[i]);
@@ -313,9 +313,9 @@ namespace WildStar.TestBed.GameTable
                 {
                     stream.Position = recordDataOffset + header.RecordSize * i;
 
-                    
 
-                    var values = new List<GameTableValue>();
+
+                    var values = new List<GameTableValue>(columns.Length);
                     foreach (GameTableColumn column in Columns)
                     {
                         var value = new GameTableValue(column.Type);
@@ -344,14 +344,14 @@ namespace WildStar.TestBed.GameTable
                                 uint offset3 = Math.Max(offset1, offset2);
 
                                 // read string
-                                long position = reader.BaseStream.Position;
-                                reader.BaseStream.Position =
+                                long position = stream.Position;
+                                stream.Position =
                                     headerSize + header.RecordOffset + offset3;
 
 
                                 value.SetValue(reader.ReadWideString());
 
-                                reader.BaseStream.Position = position;
+                                stream.Position = position;
 
 
                                 break;
