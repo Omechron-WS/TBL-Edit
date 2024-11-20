@@ -6501,11 +6501,9 @@ namespace WildStar.TestBed
             AddCOGSOutfits();
             AddCombatNPCOutfits();
 
-            SaveTables("../../../../tblNormal/");
+			DoNSFWSItemDisplays();
 
-            startItem2Id = DoNSFWSItemDisplays(startItem2Id);
-
-            SaveTables("../../../../tblNSFWS/");
+			SaveTables("../../../../tblNormal/");
 
             // BETA YOLO MOOOODE
             betaMode = true;
@@ -9176,30 +9174,20 @@ namespace WildStar.TestBed
 
             return startItem2Id;
         }
-        static uint DoNSFWSItemDisplays(uint startItem2Id)
+        static void DoNSFWSItemDisplays()
         {
             // change chest display entry
             var itemDisplayEntry_Top = itemDisplay.GetEntry(NsfwsItemDisplayId_Top);
-            itemDisplayEntry_Top.Values[14].SetValue(0u);
-            itemDisplayEntry_Top.Values[16].SetValue(0u);
-            itemDisplayEntry_Top.Values[19].SetValue(0u);
-            itemDisplayEntry_Top.Values[20].SetValue(0u);
-            itemDisplayEntry_Top.Values[23].SetValue("");
-            itemDisplayEntry_Top.Values[24].SetValue("");
-            itemDisplayEntry_Top.Values[42].SetValue(0u);
+            itemDisplayEntry_Top.Values[23].SetValue("Art\\Item\\Armor\\Outfit\\swimsuit_000\\CHR_Outfit_Nakedtop_000_mask.tex");
+			//itemDisplayEntry_Top.Values[24].SetValue("Art\\Item\\Armor\\Outfit\\Swimsuit_000\\CHR_Outfit_Naked_000_Color.tex");
+			//itemDisplayEntry_Top.Values[25].SetValue("Art\\Item\\Armor\\Outfit\\Swimsuit_000\\CHR_Outfit_Naked_000_normal.tex");
 
             // change pants display entry
             var itemDisplayEntry_Bottom = itemDisplay.GetEntry(NsfwsItemDisplayId_Bottom);
-            itemDisplayEntry_Bottom.Values[14].SetValue(0u);
-            itemDisplayEntry_Bottom.Values[16].SetValue(0u);
-            itemDisplayEntry_Bottom.Values[19].SetValue(0u);
-            itemDisplayEntry_Bottom.Values[20].SetValue(0u);
-            itemDisplayEntry_Bottom.Values[23].SetValue("");
-            itemDisplayEntry_Bottom.Values[24].SetValue("");
-            itemDisplayEntry_Bottom.Values[42].SetValue(0u);
-
-            return startItem2Id;
-        }
+			itemDisplayEntry_Top.Values[23].SetValue("Art\\Item\\Armor\\Outfit\\swimsuit_000\\CHR_Outfit_Naked_000_mask.tex");
+			//itemDisplayEntry_Top.Values[24].SetValue("Art\\Item\\Armor\\Outfit\\Swimsuit_000\\CHR_Outfit_Naked_000_Color.tex");
+			//itemDisplayEntry_Top.Values[25].SetValue("Art\\Item\\Armor\\Outfit\\swimsuit_000\\CHR_Outfit_Naked_000_Normal.tex");
+		}
 
 
         static void AddEmoteSlashCommands()
@@ -9960,8 +9948,8 @@ namespace WildStar.TestBed
         }
         static void AddCombatNPCOutfits()
         {
-            uint startCreature2OutfitInfoId = creature2OutfitInfo.GetMaxID();
-            uint startOutfitGroupId = creature2OutfitGroupEntry.GetMaxID();
+            uint startCreature2OutfitInfoId = creature2OutfitInfo.MaxID;
+            uint startOutfitGroupId = creature2OutfitGroupEntry.MaxID;
 
             //Dominion Operator
             uint dominionOperatorOutfitId = AddCreatureOutfitGroupEntry(9753, startOutfitGroupId + 1, startOutfitGroupId + 1, AddCreatureOutfitInfo(9058, startCreature2OutfitInfoId + 1, 3985, 3988, 3987, 3984, 3986, 0, 516, 516, 516, 516, 516), 1);
