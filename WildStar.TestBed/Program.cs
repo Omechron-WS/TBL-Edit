@@ -28,7 +28,9 @@ namespace WildStar.TestBed
         {
             LoadTables();
 
-            AddDecorType(DecorCategory.Beta, "Beta", "INT - Beta");
+			SetRealms();
+
+			AddDecorType(DecorCategory.Beta, "Beta", "INT - Beta");
             AddDecorType(DecorCategory.Unknown, "Unknown", "INT - Unknown");
             AddDecorType(DecorCategory.Structures, "Structures", "INT - Structures");
             AddDecorType(DecorCategory.Decals, "Decals", "INT - Decals");
@@ -125,7 +127,7 @@ namespace WildStar.TestBed
                 entry.Values[13].SetValue("Art\\FX\\Housing\\Decor_FXPlacer\\Decor_FXPlacer_000.m3"); // altEditAsset
             }
 
-            foreach (var table in tables)
+			foreach (var table in tables)
             {
                 table.beta = false;
             }
@@ -6505,7 +6507,7 @@ namespace WildStar.TestBed
 
             startItem2Id = DoNSFWSItemDisplays(startItem2Id);
 
-            SaveTables("../../../../tblNSFWS/");
+            SaveNSFWTables("../../../../tblNSFWS/");
 
             // BETA YOLO MOOOODE
             betaMode = true;
@@ -9103,6 +9105,17 @@ namespace WildStar.TestBed
             Console.WriteLine("swimsuitOutfitId00F_M = " + swimsuitOutfitId00F_M);
         }
 
+        static void SetRealms()
+        {
+            //foreach (var i in new uint[] { 7, 9 }) // 7 is EU, 9 is NA
+            foreach (var entry in realmDataCenter.table.Entries.Values)
+            {
+                //GameTableEntry entry = realmDataCenter.GetEntry(i);
+                entry.Values[5].SetValue("main.omechron.ws");
+                entry.Values[6].SetValue("main.omechron.ws");
+            }
+        }
+
         static void RemoveItemFactionRestrictions()
         {
             foreach(var entry in item2.table.Entries.Values)
@@ -9960,8 +9973,8 @@ namespace WildStar.TestBed
         }
         static void AddCombatNPCOutfits()
         {
-            uint startCreature2OutfitInfoId = creature2OutfitInfo.GetMaxID();
-            uint startOutfitGroupId = creature2OutfitGroupEntry.GetMaxID();
+            uint startCreature2OutfitInfoId = creature2OutfitInfo.MaxID;
+            uint startOutfitGroupId = creature2OutfitGroupEntry.MaxID;
 
             //Dominion Operator
             uint dominionOperatorOutfitId = AddCreatureOutfitGroupEntry(9753, startOutfitGroupId + 1, startOutfitGroupId + 1, AddCreatureOutfitInfo(9058, startCreature2OutfitInfoId + 1, 3985, 3988, 3987, 3984, 3986, 0, 516, 516, 516, 516, 516), 1);
@@ -10733,6 +10746,7 @@ namespace WildStar.TestBed
         static Table spell4 = AddTable("Spell4");
         static Table spell4Effects = AddTable("Spell4Effects");
         static Table unitVehicle = AddTable("UnitVehicle");
+        static Table realmDataCenter = AddTable("RealmDataCenter");
         static TextTable.TextTable language = null;
 
 
@@ -10764,6 +10778,12 @@ namespace WildStar.TestBed
 
             language.Save(baseFolder + "en-US.bin");
         }
+
+        public static void SaveNSFWTables(string baseFolder)
+		{
+			Directory.CreateDirectory(baseFolder + "DB");
+            itemDisplay.Save(baseFolder + "DB/");
+		}
 
         public static void CopyTables(string baseFolder, string destFolder)
         {
