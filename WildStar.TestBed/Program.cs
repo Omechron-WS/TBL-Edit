@@ -9960,8 +9960,8 @@ namespace WildStar.TestBed
         }
         static void AddCombatNPCOutfits()
         {
-            uint startCreature2OutfitInfoId = creature2OutfitInfo.GetMaxID();
-            uint startOutfitGroupId = creature2OutfitGroupEntry.GetMaxID();
+            uint startCreature2OutfitInfoId = creature2OutfitInfo.MaxID;
+            uint startOutfitGroupId = creature2OutfitGroupEntry.MaxID;
 
             //Dominion Operator
             uint dominionOperatorOutfitId = AddCreatureOutfitGroupEntry(9753, startOutfitGroupId + 1, startOutfitGroupId + 1, AddCreatureOutfitInfo(9058, startCreature2OutfitInfoId + 1, 3985, 3988, 3987, 3984, 3986, 0, 516, 516, 516, 516, 516), 1);
